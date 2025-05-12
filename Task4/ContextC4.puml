@@ -1,0 +1,25 @@
+@startuml C4_Elements
+
+title Передача актуальных ставок по депозитам в кол-центр
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(client, "Клиент")
+Person(credits_manager, "Менеджер\nотдела кредитов")
+Person(operator, "Оператор\nкол-центра")
+Person(outsource_operator, "Оператор партнерского кол-центра")
+
+System(internet_bank, "Интернет банк", "Показывает предложения, помогает открыть депозит")
+System_Ext(call_center, "Система кол-центра", "Управляет звонками клиентам")
+System_Ext(outsource_call_center, "Система партнерского кол-центра", "Управляет звонками клиентам")
+
+Rel_R(credits_manager, internet_bank, "Актуализирует ставки")
+Rel_U(internet_bank, call_center, "Передает файл с актуальными ставками")
+Rel_U(internet_bank, outsource_call_center, "Передает файл с актуальными ставками")
+
+Rel_L(client, operator, "Звонит")
+Rel_R(client, outsource_operator, "Звонит")
+Rel_D(operator, call_center, "Узнает актуальные ставки")
+Rel_D(outsource_operator, outsource_call_center, "Узнает актуальные ставки")
+
+@enduml

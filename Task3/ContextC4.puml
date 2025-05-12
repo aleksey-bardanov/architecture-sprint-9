@@ -1,6 +1,6 @@
 @startuml C4_Elements
 
-title Диаграмма контекста системы интернет банка "Стандарт"
+title Открытие депозитов онлайн
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
