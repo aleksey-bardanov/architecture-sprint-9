@@ -1,0 +1,47 @@
+@startuml Basic Sample
+
+title Открытие депозитов онлайн
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(client, "Клиент")
+Person(deposits_manager, "Менеджер\nотдела депозитов")
+Person(credits_manager, "Менеджер\nотдела кредитов")
+Person(fo_manager, "Менеджер\nфронт-офиса")
+
+System_Ext(bank_landing, "Сайт банка", "Предоставляет информацию об услугах банка")
+
+System_Boundary(internet_bank, "Интернет банк") {
+    Container(ib_fe, "Web App", "C#, ASP.NET MVC 4.5", "Веб-приложение интернет-банк")
+    Container(ib_admin, "Панель администратора", "C#, ASP.NET MVC 4.5", "Веб-приложение")
+    Container(ib_be, "Сервис авторизации", "C#, ASP.NET MVC 4.5", "Аутентификация, авторизация, уведомления")
+    ContainerDb(ib_data, "База данных сервиса авторизации", "MS SQL", "Аккаунты клиентов")
+    Container(deposits, "Сервис депозитов", "C#, ASP.NET MVC 4.5", "Управляет депозитами клиентов")
+    ContainerDb(deposits_data, "База данных депозитов", "MS SQL", "Заявки и депозиты клиентов, актуальные ставки, персональные предложения")
+}
+
+System_Boundary(abs, "АБC") {
+    Container(abs_desktop, "Клиент АБС", "Delphy", "Десктоп приложение для работы с АБС")
+    ContainerDb(abs_data, "Основная база данных АБС", "Oracle", "Данные АБС")
+}
+
+Rel(fo_manager, ib_admin, "Подтверждает личность клиента", "HTTPS")
+Rel(ib_admin, ib_be, "Управление ролями клиентов", "REST")
+Rel(credits_manager, ib_admin, "Актуализирует ставки", "HTTPS")
+Rel(ib_admin, deposits, "Актуализирует ставки", "REST")
+
+Rel_D(ib_be, ib_data, "Чтение/Запись", "SQL")
+Rel_R(ib_be, client, "Подтверждение операции", "SMS")
+
+Rel_R(client, bank_landing, "Использует", "HTTP")
+Rel_D(bank_landing, ib_fe, "Переадресует", "HTTPS")
+Rel_D(client, ib_fe, "Использует", "HTTPS")
+Rel_D(ib_fe, ib_be, "Авторизация", "REST")
+Rel_D(ib_fe, deposits, "Cтавки и персональные предложения\nУправление депозитами", "REST")
+
+Rel_D(deposits_manager, abs_desktop, "Обрабатывает заявки", "UI")
+Rel_D(abs_desktop, abs_data, "Чтение/Запись", "PL-SQL")
+Rel_D(deposits, deposits_data, "Чтение/Запись", "SQL")
+Rel_L(abs_desktop, deposits, "Обновляет персональные предложения\nПолучает актуальные ставки по депозитам", "REST")
+
+@enduml

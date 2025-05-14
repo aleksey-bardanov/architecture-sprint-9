@@ -1,0 +1,32 @@
+@startuml C4_Elements
+
+title Открытие депозитов онлайн
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(client, "Клиент")
+Person(deposits_manager, "Менеджер\nотдела депозитов")
+Person(credits_manager, "Менеджер\nотдела кредитов")
+Person(fo_manager, "Менеджер\nфронт-офиса")
+Person(operator, "Оператор\nкол-центра")
+
+System(internet_bank, "Интернет банк", "Показывает предложения, помогает открыть депозит")
+System(abs, "AБС", "Управляет банковскими операциями")
+System_Ext(landing, "Сайт банка", "Предоставляет информацию об услугах банка")
+System_Ext(call_center, "Система кол-центра", "Управляет звонками клиентам")
+
+Rel_R(client, landing, "Использует")
+Rel_R(landing, internet_bank, "Переадресует")
+Rel(client, internet_bank, "Использует")
+Rel_U(abs, internet_bank, "Получает актуальные ставки по депозитам, обрабатывает заявки")
+Rel_U(internet_bank, client, "Отправляет СМС")
+Rel_L(fo_manager, internet_bank, "Управляет клиентами")
+Rel_L(fo_manager, client, "Проверяет документы")
+Rel_R(credits_manager, internet_bank, "Актуализирует ставки")
+
+Rel_R(deposits_manager, abs, "Обрабатывает заявки")
+Rel_U(deposits_manager, call_center, "Использует")
+Rel_D(operator, call_center, "Использует")
+Rel_R(operator, client, "Звонит")
+
+@enduml
